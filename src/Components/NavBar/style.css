@@ -1,0 +1,13 @@
+.containerPrincipalNavBar {
+  width: 100%;
+}
+
+.containerPrincipalNavBar h1 {
+  cursor: pointer;
+  color: #510083;
+  font-size: 24px;
+  font-weight: 400;
+  text-decoration: underline;
+  padding-left: 1vw;
+  max-width: 204px;
+}
