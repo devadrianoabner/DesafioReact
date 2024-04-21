@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Card from "../Card";
-import NavBar from "../NavBar";
-import Modal from "../Modal";
+import Card from "../card/card";
+import Modal from "../modal/modal";
+import NavBar from "../navBar/naveBar";
 import { ContainerPrincipalBody, ContainerProdutos } from "./styles";
 import { v4 as uuidv4 } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
@@ -13,18 +13,30 @@ import {
   deleteProduct,
 } from "../../API/api";
 
-const Body = () => {
-  const [listaProdutos, setListaProdutos] = useState([]);
-  const [modalAberto, setModalAberto] = useState(false);
-  const [produtoSelecionado, setProdutoSelecionado] = useState();
+interface Produto {
+  id: string;
+  nome: string;
+  preco: string;
+  marca: string;
+  src: string;
+  alt: string;
+}
 
-  const notificacaoSucesso = (textoSucesso) => toast.success(textoSucesso);
-  const notificacaoErro = (textoErro) => toast.success(textoErro);
+const MainArea: React.FC = () => {
+  const [listaProdutos, setListaProdutos] = useState<Produto[]>([]);
+  const [modalAberto, setModalAberto] = useState<boolean>(false);
+  const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(
+    null
+  );
+
+  const notificacaoSucesso = (textoSucesso: string) =>
+    toast.success(textoSucesso);
+  const notificacaoErro = (textoErro: string) => toast.error(textoErro);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const produtosData = await getAllProducts();
+        const produtosData: Produto[] = await getAllProducts();
         setListaProdutos(produtosData);
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
@@ -34,7 +46,7 @@ const Body = () => {
     fetchProducts();
   }, []);
 
-  const adicionarProduto = async (novoProduto) => {
+  const adicionarProduto = async (novoProduto: Produto) => {
     try {
       const novoProdutoComId = { ...novoProduto, id: uuidv4() };
       await createProduct(novoProdutoComId);
@@ -43,11 +55,11 @@ const Body = () => {
         `${novoProduto.nome} foi adicionado à lista de produtos`
       );
     } catch (error) {
-      notificacaoErro("Erro ao adicionar produto:", error);
+      notificacaoErro(`Erro ao adicionar produto: ${error}`);
     }
   };
 
-  const apagarProduto = async (id) => {
+  const apagarProduto = async (id: string) => {
     try {
       await deleteProduct(id);
       const novaListaProdutos = listaProdutos.filter(
@@ -56,24 +68,29 @@ const Body = () => {
       setListaProdutos(novaListaProdutos);
       notificacaoSucesso("Produto removido com sucesso");
     } catch (error) {
-      notificacaoErro("Erro ao excluir produto:", error);
+      notificacaoErro(`Erro ao adicionar produto: ${error}`);
     }
   };
 
-  const editarProduto = async (id, novoProduto) => {
+  const editarProduto = async (id: string, novoProduto: Produto) => {
     try {
-      await editProduct(id, novoProduto);
+      const produtoEditado = await editProduct(id, novoProduto);
 
-      const novaListaProdutos = listaProdutos.map((produto) =>
-        produto.id === id ? novoProduto : produto
-      );
-      setListaProdutos(novaListaProdutos);
+      if (produtoEditado) {
+        const novaListaProdutos = listaProdutos.map((produto) =>
+          produto.id === id ? produtoEditado : produto
+        );
+        setListaProdutos(novaListaProdutos);
 
-      toggleModal();
+        toggleModal();
 
-      notificacaoSucesso("Produto editado com sucesso");
+        notificacaoSucesso("Produto editado com sucesso");
+      } else {
+        notificacaoErro("Erro ao editar produto(verificar console)");
+      }
     } catch (error) {
-      notificacaoErro("Erro ao editar produto:", error);
+      notificacaoErro(`Erro ao adicionar produto ${error}`);
+      console.log(error);
     }
   };
 
@@ -105,7 +122,6 @@ const Body = () => {
             key={produto.id}
             produto={produto}
             apagarProduto={apagarProduto}
-            editarProduto={editarProduto}
             toggleModal={toggleModal}
             setProdutoSelecionado={setProdutoSelecionado}
             produtoSelecionado={produtoSelecionado}
@@ -117,4 +133,4 @@ const Body = () => {
   );
 };
 
-export default Body;
+export default MainArea;

@@ -1,10 +1,19 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+
+interface Product {
+  id: string;
+  nome: string;
+  preco: string;
+  marca: string;
+  src: string;
+  alt: string;
+}
 
 const API_URL = "https://6288144910e93797c1564f40.mockapi.io/api/v1/";
 
-const getAllProducts = async () => {
+const getAllProducts = async (): Promise<Product[]> => {
   try {
-    const response = await axios.get(`${API_URL}/product`);
+    const response: AxiosResponse<Product[]> = await axios.get<Product[]>(`${API_URL}/product`);
     return response.data;
   } catch (error) {
     console.error("Erro ao obter produtos:", error);
@@ -12,9 +21,9 @@ const getAllProducts = async () => {
   }
 };
 
-const createProduct = async (newProduct) => {
+const createProduct = async (newProduct: Product): Promise<Product | null> => {
   try {
-    const response = await axios.post(`${API_URL}/product`, newProduct);
+    const response: AxiosResponse<Product> = await axios.post<Product>(`${API_URL}/product`, newProduct);
     return response.data;
   } catch (error) {
     console.error("Erro ao criar produto:", error);
@@ -22,9 +31,9 @@ const createProduct = async (newProduct) => {
   }
 };
 
-const editProduct = async (productId, updatedProduct) => {
+const editProduct = async (productId: string, updatedProduct: Product): Promise<Product | null> => {
   try {
-    const response = await axios.patch(
+    const response: AxiosResponse<Product> = await axios.patch<Product>(
       `${API_URL}/product/${productId}`,
       updatedProduct
     );
@@ -35,7 +44,7 @@ const editProduct = async (productId, updatedProduct) => {
   }
 };
 
-const deleteProduct = async (productId) => {
+const deleteProduct = async (productId: string): Promise<boolean> => {
   try {
     await axios.delete(`${API_URL}/product/${productId}`);
     return true;

@@ -1,4 +1,3 @@
-//import React, { useState } from "react";
 import styled from "styled-components";
 
 export const Overlay = styled.div`
@@ -38,11 +37,13 @@ export const ContainerInfo = styled.div`
   }
 `;
 
-export const BotaoFechar = styled.p`
+export const BotaoFechar = styled.button`
   width: 100%;
   display: flex;
   justify-content: flex-end;
   cursor: pointer;
+  background-color: transparent;
+  border: none;
 `;
 
 export const BotaoConfirmar = styled.button`
@@ -53,4 +54,6 @@ export const BotaoConfirmar = styled.button`
   color: #510083;
   font-size: 18px;
   margin-top: 5vh;
+  background-color: transparent;
+  border: none;
 `;
